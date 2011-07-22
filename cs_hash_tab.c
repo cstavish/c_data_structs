@@ -189,6 +189,14 @@ cs_hash_tab *cs_hash_create_kv(const char *key, void *val, ...) {
 	return t;
 }
 
+void cs_hash_iterate(cs_hash_tab *tab, void (*for_each)(const char *, void *)) {
+	for (int i = 0; i < tab->size; i++) {
+		for (cs_knode *n = tab->buckets[i]; n != NULL; n = n->next) {
+			for_each(n->key, n->val);
+		}
+	}
+}
+
 void cs_hash_destroy(cs_hash_tab *tab) {
 	for (int i = 0; i < tab->size; i++) {
 		for (cs_knode *n = tab->buckets[i]; n != NULL; n = n->next) {

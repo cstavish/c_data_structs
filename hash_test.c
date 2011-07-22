@@ -7,6 +7,10 @@ static void clean_up(const char *key, void *val) {
 	// nothing to clean up in this case (string constants)
 }
 
+static void for_each(const char *key, void *val) {
+	printf("%s => %s\n", key, (const char *)val);
+}	
+
 int main() {
 	cs_hash_tab *t = cs_hash_create_kv("Pink", "Floyd", "Jimi", "Hendrix", "Grateful", "Dead", "Titus", "Andronicus", NULL);
 	t->cleanup = clean_up;
@@ -16,5 +20,6 @@ int main() {
 	puts(cs_hash_get(t, "Jimi"));
 	puts(cs_hash_get(t, "Grateful"));
 	puts(cs_hash_get(t, "Steely"));
+	cs_hash_iterate(t, for_each);
 	cs_hash_destroy(t);
 }

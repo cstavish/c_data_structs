@@ -121,6 +121,16 @@ void *cs_hash_del(cs_hash_tab *tab, const char *key);
 
 
 /**
+ * cs_hash_iterate - calls the specified function for each element in hash table
+ *
+ * @param tab	-
+ * @param for_each - function pointer
+ *
+ */
+void cs_hash_iterate(cs_hash_tab *tab, void (*for_each)(const char *, void *));
+
+
+/**
  * cs_hash_destroy - destroy the specified hash table in its entirity
  *
  * @param tab -
