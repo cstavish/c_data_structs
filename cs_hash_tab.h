@@ -1,51 +1,49 @@
 /*
+Copyright (c) 2011, Coleman Stavish
+All rights reserved.
 
-	Copyright (c) 2011, Coleman Stavish
-	All rights reserved.
-	
-	Redistribution and use in source and binary forms, with or without
-	modification, are permitted provided that the following conditions are met:
-		* Redistributions of source code must retain the above copyright
-			notice, this list of conditions and the following disclaimer.
-		* Redistributions in binary form must reproduce the above copyright
-			notice, this list of conditions and the following disclaimer in the
-			documentation and/or other materials provided with the distribution.
-		* Neither the name of Coleman Stavish nor the
-			names of contributors may be used to endorse or promote products
-			derived from this software without specific prior written permission.
-	
-	THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
-	ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-	WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-	DISCLAIMED. IN NO EVENT SHALL COLEMAN STAVISH BE LIABLE FOR ANY
-	DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
-	(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
-	ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-	(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
-	SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-	
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+  * Redistributions of source code must retain the above copyright
+	notice, this list of conditions and the following disclaimer.
+  * Redistributions in binary form must reproduce the above copyright
+	notice, this list of conditions and the following disclaimer in the
+	documentation and/or other materials provided with the distribution.
+  * Neither the name of Coleman Stavish nor the
+	names of contributors may be used to endorse or promote products
+	derived from this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL COLEMAN STAVISH BE LIABLE FOR ANY
+DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 #include <stdint.h>
 
 struct cs_knode {
-	char *key;
-	void *val;
-	struct cs_knode *next;
+    char *key;
+    void *val;
+    struct cs_knode *next;
 };
 
 struct cs_hash_tab {
-	uint32_t size;
-	uint32_t count;
-	float max_load;
-	float min_load;
-	struct cs_knode **buckets;
-	void (*cleanup)(const char *, void *);
-	uint32_t (*hash)(const char *, uint32_t);
+    uint32_t size;
+    uint32_t count;
+    float max_load;
+    float min_load;
+    struct cs_knode **buckets;
+    void (*cleanup)(const char *, void *);
+    uint32_t (*hash)(const char *, uint32_t);
 };
 
-typedef struct cs_knode	cs_knode;
+typedef struct cs_knode cs_knode;
 typedef struct cs_hash_tab cs_hash_tab;
 
 /**
@@ -75,9 +73,9 @@ cs_hash_tab *cs_hash_create_kv(const char *key, void *val, ...);
 /**
  * cs_hash_create_opt - create hash table with the specified options
  *
- * @param initial		- initial number of buckets to allocate
- * @param max_load	- maximum element-bucket ratio before the table is resized and keys are rehashed
- * @param min_load	- minimum ''
+ * @param initial       - initial number of buckets to allocate
+ * @param max_load  - maximum element-bucket ratio before the table is resized and keys are rehashed
+ * @param min_load  - minimum ''
  *
  * @return - a reference to a newly allocated hash table, populated with the specified key-value pairs
  *
@@ -123,7 +121,7 @@ void *cs_hash_del(cs_hash_tab *tab, const char *key);
 /**
  * cs_hash_iterate - calls the specified function for each element in hash table
  *
- * @param tab	-
+ * @param tab   -
  * @param for_each - function pointer
  *
  */
