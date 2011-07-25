@@ -79,7 +79,27 @@ static void resize_(cs_hash_tab *tab, float factor) {
 	tab->buckets = buckets;
 }
 
+static cs_knode *lookup_(cs_hash_tab *tab, const char *key) {
+	uint32_t index = tab->hash(key, tab->size);
+	for (cs_knode *n = tab->buckets[index]; n != NULL; n = n->next) {
+		if (strcmp(key, n->key) == 0)
+		return n;
+	}
+	return NULL;
+}
+
 static void map_(cs_hash_tab *tab, const char *key, void *val) {
+	cs_knode *n = lookup_(tab, key);
+	
+	// a value is already defined for this key
+	// cleanup old; assign new
+	if (n != NULL) {
+		if (tab->cleanup)
+			tab->cleanup(n->key, n->val);
+		n->val = val;
+		return;
+	}
+	
 	uint32_t index = tab->hash(key, tab->size);
 	
 	cs_knode *node = malloc(sizeof(cs_knode));
@@ -114,15 +134,6 @@ static void *delete_(cs_hash_tab *tab, const char *key) {
 	return NULL;
 }
 
-static void *lookup_(cs_hash_tab *tab, const char *key) {
-	uint32_t index = tab->hash(key, tab->size);
-	for (cs_knode *n = tab->buckets[index]; n != NULL; n = n->next) {
-		if (strcmp(key, n->key) == 0)
-		return n->val;
-	}
-	return NULL;
-}
-
 static void print_(cs_hash_tab *tab) {
 	printf("hash %p: keys: { ", tab);
 	for (int i = 0; i < tab->size; i++) {
@@ -138,7 +149,10 @@ void cs_hash_set(cs_hash_tab *tab, const char *key, void *val) {
 }
 
 void *cs_hash_get(cs_hash_tab *tab, const char *key) {
-	return lookup_(tab, key);
+	cs_knode *n = lookup_(tab, key);
+	if (n == NULL)
+		return NULL;
+	return n->val;
 }
 
 void *cs_hash_del(cs_hash_tab *tab, const char *key) {
@@ -189,10 +203,11 @@ cs_hash_tab *cs_hash_create_kv(const char *key, void *val, ...) {
 	return t;
 }
 
-void cs_hash_iterate(cs_hash_tab *tab, void (*for_each)(const char *, void *)) {
+void cs_hash_iterate(cs_hash_tab *tab, void (*for_each)(cs_hash_tab *, const char *, void *, uint32_t)) {
+	uint32_t count = 0;
 	for (int i = 0; i < tab->size; i++) {
 		for (cs_knode *n = tab->buckets[i]; n != NULL; n = n->next) {
-			for_each(n->key, n->val);
+			for_each(tab, n->key, n->val, count++);
 		}
 	}
 }

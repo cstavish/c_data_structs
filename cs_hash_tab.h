@@ -127,7 +127,7 @@ void *cs_hash_del(cs_hash_tab *tab, const char *key);
  * @param for_each - function pointer
  *
  */
-void cs_hash_iterate(cs_hash_tab *tab, void (*for_each)(const char *, void *));
+void cs_hash_iterate(cs_hash_tab *tab, void (*for_each)(cs_hash_tab *, const char *, void *, uint32_t));
 
 
 /**
