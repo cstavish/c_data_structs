@@ -31,15 +31,13 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <stdarg.h>
 #include "cs_hash_tab.h"
 
-// this is essentially the example in K&R C, suggestions for improvement welcome
-static uint32_t hash_(const char *key, uint32_t size) {
-    uint32_t index = 0;
-    for (; *key != '\0'; key++) {
-        index = *key + 31 * index;
+static uint32_t hash_(const char *k) {
+    uint32_t hash = 0;
+    while (*k) {
+        hash = hash * 101 + *k++;
     }
-    return index * 67 % size;
+    return hash;
 }
-
 static inline void destroy_node_(cs_knode *node) {
     free(node->key);
     free(node);
@@ -65,7 +63,7 @@ static void resize_(cs_hash_tab *tab, float factor) {
     cs_knode **buckets = calloc(sizeof(cs_knode *) * size, 1);
     for (int i = 0; i < tab->size; i++) {
         for (cs_knode *n = tab->buckets[i]; n != NULL;) {
-            uint32_t index = tab->hash(n->key, size);
+            uint32_t index = tab->hash(n->key) % size;
             // install_() alters member 'next'; preserve it for now
             cs_knode *temp = n->next;
             install_(buckets, n, index);
@@ -78,7 +76,7 @@ static void resize_(cs_hash_tab *tab, float factor) {
 }
 
 static cs_knode *lookup_(cs_hash_tab *tab, const char *key) {
-    uint32_t index = tab->hash(key, tab->size);
+    uint32_t index = tab->hash(key) % tab->size;
     for (cs_knode *n = tab->buckets[index]; n != NULL; n = n->next) {
         if (strcmp(key, n->key) == 0)
         return n;
@@ -98,7 +96,7 @@ static void map_(cs_hash_tab *tab, const char *key, void *val) {
         return;
     }
     
-    uint32_t index = tab->hash(key, tab->size);
+    uint32_t index = tab->hash(key) % tab->size;
     
     cs_knode *node = malloc(sizeof(cs_knode));
     node->key = strdup(key);
@@ -111,7 +109,7 @@ static void map_(cs_hash_tab *tab, const char *key, void *val) {
 }
 
 static void *delete_(cs_hash_tab *tab, const char *key) {
-    uint32_t index = tab->hash(key, tab->size);
+    uint32_t index = tab->hash(key) % tab->size;
     cs_knode *n, *p;
     uint32_t i = 0;
     for (n = p = tab->buckets[index]; n != NULL; p = n, n = n->next) {

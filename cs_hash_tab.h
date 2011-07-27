@@ -40,7 +40,7 @@ struct cs_hash_tab {
     float min_load;
     struct cs_knode **buckets;
     void (*cleanup)(const char *, void *);
-    uint32_t (*hash)(const char *, uint32_t);
+    uint32_t (*hash)(const char *);
 };
 
 typedef struct cs_knode cs_knode;
