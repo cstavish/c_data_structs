@@ -29,7 +29,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <stdarg.h>
 #include <stdlib.h>
 
-static cs_sll_node *get_sll_(cs_sll *list, uint32_t index) {
+static cs_sll_node *get_sll_(cs_sll *list, size_t index) {
     if (list == NULL)
         return NULL;
     
@@ -41,7 +41,7 @@ static cs_sll_node *get_sll_(cs_sll *list, uint32_t index) {
     return NULL;
 }
 
-static cs_dll_node *get_dll_(cs_dll *list, uint32_t index) {
+static cs_dll_node *get_dll_(cs_dll *list, size_t index) {
     if (list == NULL)
         return NULL;
     
@@ -89,14 +89,14 @@ static cs_dll_node *destroy_node_dll_(cs_dll_node *n, void(*cleanup)(void *)) {
     return next;
 }
 
-void *cs_sll_get(cs_sll *list, uint32_t index) {
+void *cs_sll_get(cs_sll *list, size_t index) {
     cs_sll_node *n = get_sll_(list, index);
     if (n == NULL)
         return NULL;
     return n->data;
 }
 
-uint8_t cs_sll_ins(cs_sll *list, void *data, uint32_t index) {
+uint8_t cs_sll_ins(cs_sll *list, void *data, size_t index) {
     if (list == NULL)
         return 0;
     
@@ -119,7 +119,7 @@ uint8_t cs_sll_ins(cs_sll *list, void *data, uint32_t index) {
     return 1;
 }
 
-void *cs_sll_del(cs_sll *list, uint32_t index) {
+void *cs_sll_del(cs_sll *list, size_t index) {
     if (list == NULL)
         return NULL;
     
@@ -148,18 +148,18 @@ void *cs_sll_del(cs_sll *list, uint32_t index) {
 }
 
 uint8_t cs_sll_app(cs_sll *list, void *data) {
-    uint32_t index = list->size;
+    size_t index = list->size;
     return cs_sll_ins(list, data, index);
 }
 
-void *cs_dll_get(cs_dll *list, uint32_t index) {
+void *cs_dll_get(cs_dll *list, size_t index) {
     cs_dll_node *n = get_dll_(list, index);
     if (n == NULL)
         return NULL;
     return n->data;
 }
 
-uint8_t cs_dll_ins(cs_dll *list, void *data, uint32_t index) {
+uint8_t cs_dll_ins(cs_dll *list, void *data, size_t index) {
     if (list == NULL)
         return 0;
     
@@ -197,7 +197,7 @@ uint8_t cs_dll_ins(cs_dll *list, void *data, uint32_t index) {
     return 1;
 }
 
-uint8_t cs_sll_swap(cs_sll *list, uint32_t x, uint32_t y) {
+uint8_t cs_sll_swap(cs_sll *list, size_t x, size_t y) {
     if (list == NULL || list->size < x || list->size < y)
         return 0;
         
@@ -212,7 +212,7 @@ uint8_t cs_sll_swap(cs_sll *list, uint32_t x, uint32_t y) {
     return 1;
 }
 
-uint8_t cs_sll_set(cs_sll *list, void *data, uint32_t index) {
+uint8_t cs_sll_set(cs_sll *list, void *data, size_t index) {
     if (list == NULL || list->size < index)
         return 0;
         
@@ -221,7 +221,7 @@ uint8_t cs_sll_set(cs_sll *list, void *data, uint32_t index) {
     return 1;
 }
 
-void *cs_dll_del(cs_dll *list, uint32_t index) {
+void *cs_dll_del(cs_dll *list, size_t index) {
     if (list == NULL)
         return NULL;
     
@@ -254,7 +254,7 @@ void *cs_dll_del(cs_dll *list, uint32_t index) {
     return data;
 }
 
-uint8_t cs_dll_set(cs_dll *list, void *data, uint32_t index) {
+uint8_t cs_dll_set(cs_dll *list, void *data, size_t index) {
     if (list == NULL || list->size < index)
         return 0;
         
@@ -263,7 +263,7 @@ uint8_t cs_dll_set(cs_dll *list, void *data, uint32_t index) {
     return 1;
 }
 
-uint8_t cs_dll_swap(cs_dll *list, uint32_t x, uint32_t y) {
+uint8_t cs_dll_swap(cs_dll *list, size_t x, size_t y) {
     if (list == NULL || list->size < x || list->size < y)
         return 0;
         

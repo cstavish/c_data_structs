@@ -34,7 +34,7 @@ static void clean_up(const char *key, void *val) {
     // nothing to clean up in this case (string constants)
 }
 
-static void for_each(const char *key, void *val) {
+static void for_each(cs_hash_tab *tab, const char *key, void *val, size_t count) {
     printf("%s => %s\n", key, (const char *)val);
 }   
 

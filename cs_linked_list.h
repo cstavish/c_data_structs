@@ -26,6 +26,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 #include <stdint.h>
+#include <stddef.h>
 
 struct cs_sll_node {
     void *data;
@@ -38,13 +39,13 @@ struct cs_dll_node {
 };
 
 struct cs_dll_head {
-    uint32_t size;
+    size_t size;
     struct cs_dll_node *start, *end;
     void (*cleanup)(void *);
 };
 
 struct cs_sll_head {
-    uint32_t size;
+    size_t size;
     struct cs_sll_node *start;
     void (*cleanup)(void *);
 };
@@ -76,8 +77,8 @@ cs_dll *cs_dll_create(void (*cleanup)(void *), ...);
  * @return - the value stored in the element at the specified index, or NULL, if (not iff) no element exists at the specified index
  *
  */
-void *cs_sll_get(cs_sll *list, uint32_t index);
-void *cs_dll_get(cs_dll *list, uint32_t index);
+void *cs_sll_get(cs_sll *list, size_t index);
+void *cs_dll_get(cs_dll *list, size_t index);
 
 
 /**
@@ -92,8 +93,8 @@ void *cs_dll_get(cs_dll *list, uint32_t index);
  * @return - 0 upon failure, 1 upon success
  *
  */
-uint8_t cs_sll_ins(cs_sll *list, void *data, uint32_t index);
-uint8_t cs_dll_ins(cs_dll *list, void *data, uint32_t index);
+uint8_t cs_sll_ins(cs_sll *list, void *data, size_t index);
+uint8_t cs_dll_ins(cs_dll *list, void *data, size_t index);
 
 
 /**
@@ -102,8 +103,8 @@ uint8_t cs_dll_ins(cs_dll *list, void *data, uint32_t index);
  * @return - 0 upon failure, 1 upon success
  *
  */
-uint8_t cs_sll_swap(cs_sll *list, uint32_t x, uint32_t y);
-uint8_t cs_dll_swap(cs_dll *list, uint32_t x, uint32_t y);
+uint8_t cs_sll_swap(cs_sll *list, size_t x, size_t y);
+uint8_t cs_dll_swap(cs_dll *list, size_t x, size_t y);
 
 /**
  * cs_sll_set | cs_dll_set - set the specified data at the specified index
@@ -113,8 +114,8 @@ uint8_t cs_dll_swap(cs_dll *list, uint32_t x, uint32_t y);
  * NOTE: these functions cannot be used to insert new elements
  *
  */
-uint8_t cs_sll_set(cs_sll *list, void *data, uint32_t index);
-uint8_t cs_dll_set(cs_dll *list, void *data, uint32_t index);
+uint8_t cs_sll_set(cs_sll *list, void *data, size_t index);
+uint8_t cs_dll_set(cs_dll *list, void *data, size_t index);
 
 
 /**
@@ -128,8 +129,8 @@ uint8_t cs_dll_set(cs_dll *list, void *data, uint32_t index);
  * @return - data stored in the removed element, or NULL, if (not iff) no element exists at the specified index
  *
  */
-void *cs_sll_del(cs_sll *list, uint32_t index);
-void *cs_dll_del(cs_dll *list, uint32_t index);
+void *cs_sll_del(cs_sll *list, size_t index);
+void *cs_dll_del(cs_dll *list, size_t index);
 
 
 /**

@@ -34,13 +34,13 @@ struct cs_knode {
 };
 
 struct cs_hash_tab {
-    uint32_t size;
-    uint32_t count;
+    size_t size;
+    size_t count;
     float max_load;
     float min_load;
     struct cs_knode **buckets;
     void (*cleanup)(const char *, void *);
-    uint32_t (*hash)(const char *);
+    size_t (*hash)(const char *);
 };
 
 typedef struct cs_knode cs_knode;
@@ -80,7 +80,7 @@ cs_hash_tab *cs_hash_create_kv(const char *key, void *val, ...);
  * @return - a reference to a newly allocated hash table, populated with the specified key-value pairs
  *
  */
-cs_hash_tab *cs_hash_create_opt(uint32_t initial, float max_load, float min_load);
+cs_hash_tab *cs_hash_create_opt(size_t initial, float max_load, float min_load);
 
 
 /**
@@ -125,7 +125,7 @@ void *cs_hash_del(cs_hash_tab *tab, const char *key);
  * @param for_each - function pointer
  *
  */
-void cs_hash_iterate(cs_hash_tab *tab, void (*for_each)(cs_hash_tab *, const char *, void *, uint32_t));
+void cs_hash_iterate(cs_hash_tab *tab, void (*for_each)(cs_hash_tab *, const char *, void *, size_t));
 
 
 /**

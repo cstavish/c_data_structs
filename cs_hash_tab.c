@@ -31,8 +31,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <stdarg.h>
 #include "cs_hash_tab.h"
 
-static uint32_t hash_(const char *k) {
-    uint32_t hash = 0;
+static size_t hash_(const char *k) {
+    size_t hash = 0;
     while (*k) {
         hash = hash * 101 + *k++;
     }
@@ -43,7 +43,7 @@ static inline void destroy_node_(cs_knode *node) {
     free(node);
 }
 
-static void install_(cs_knode **buckets, cs_knode *node, uint32_t index) {
+static void install_(cs_knode **buckets, cs_knode *node, size_t index) {
     if (buckets[index] == NULL) {
         buckets[index] = node;
         node->next = NULL;
@@ -57,13 +57,13 @@ static void install_(cs_knode **buckets, cs_knode *node, uint32_t index) {
 
 // allocate new bucket array; rehash keys and populate buckets; free old bucket array
 static void resize_(cs_hash_tab *tab, float factor) {
-    uint32_t size = (int)(factor * tab->size);
+    size_t size = (int)(factor * tab->size);
     if (size == 0)
         size = 1;
     cs_knode **buckets = calloc(sizeof(cs_knode *) * size, 1);
     for (int i = 0; i < tab->size; i++) {
         for (cs_knode *n = tab->buckets[i]; n != NULL;) {
-            uint32_t index = tab->hash(n->key) % size;
+            size_t index = tab->hash(n->key) % size;
             // install_() alters member 'next'; preserve it for now
             cs_knode *temp = n->next;
             install_(buckets, n, index);
@@ -76,7 +76,7 @@ static void resize_(cs_hash_tab *tab, float factor) {
 }
 
 static cs_knode *lookup_(cs_hash_tab *tab, const char *key) {
-    uint32_t index = tab->hash(key) % tab->size;
+    size_t index = tab->hash(key) % tab->size;
     for (cs_knode *n = tab->buckets[index]; n != NULL; n = n->next) {
         if (strcmp(key, n->key) == 0)
         return n;
@@ -96,7 +96,7 @@ static void map_(cs_hash_tab *tab, const char *key, void *val) {
         return;
     }
     
-    uint32_t index = tab->hash(key) % tab->size;
+    size_t index = tab->hash(key) % tab->size;
     
     cs_knode *node = malloc(sizeof(cs_knode));
     node->key = strdup(key);
@@ -109,7 +109,7 @@ static void map_(cs_hash_tab *tab, const char *key, void *val) {
 }
 
 static void *delete_(cs_hash_tab *tab, const char *key) {
-    uint32_t index = tab->hash(key) % tab->size;
+    size_t index = tab->hash(key) % tab->size;
     cs_knode *n, *p;
     uint32_t i = 0;
     for (n = p = tab->buckets[index]; n != NULL; p = n, n = n->next) {
@@ -158,7 +158,7 @@ void *cs_hash_del(cs_hash_tab *tab, const char *key) {
     return val;
 }
 
-cs_hash_tab *cs_hash_create_opt(uint32_t initial, float max_load, float min_load) {
+cs_hash_tab *cs_hash_create_opt(size_t initial, float max_load, float min_load) {
     cs_hash_tab *tab = malloc(sizeof(cs_hash_tab));
     if (tab == NULL)
         return NULL;
@@ -199,8 +199,8 @@ cs_hash_tab *cs_hash_create_kv(const char *key, void *val, ...) {
     return t;
 }
 
-void cs_hash_iterate(cs_hash_tab *tab, void (*for_each)(cs_hash_tab *, const char *, void *, uint32_t)) {
-    uint32_t count = 0;
+void cs_hash_iterate(cs_hash_tab *tab, void (*for_each)(cs_hash_tab *, const char *, void *, size_t)) {
+    size_t count = 0;
     for (int i = 0; i < tab->size; i++) {
         for (cs_knode *n = tab->buckets[i]; n != NULL; n = n->next) {
             for_each(tab, n->key, n->val, count++);
