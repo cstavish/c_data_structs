@@ -41,6 +41,10 @@ struct cs_hash_tab {
     struct cs_knode **buckets;
     void (*cleanup)(const char *, void *);
     size_t (*hash)(const char *);
+    uint8_t copy_keys; // when nonzero (default), key strings will be copied, not merely assigned
+    uint8_t free_keys; // when nonzero (default), key strings will be freed upon hash table destruction
+    // client programs need to use dynamically allocated strings as keys--if keys are not unnecessary
+    //  copied, client programs will see enchanced performance
 };
 
 typedef struct cs_knode cs_knode;

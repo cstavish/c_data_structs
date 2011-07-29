@@ -38,12 +38,13 @@ static size_t hash_(const char *k) {
     }
     return hash;
 }
-static inline void destroy_node_(cs_knode *node) {
-    free(node->key);
+static inline void destroy_node_(cs_knode *node, uint8_t free_key) {
+    if (free_key)
+        free(node->key);
     free(node);
 }
 
-static void install_(cs_knode **buckets, cs_knode *node, size_t index) {
+static inline void install_(cs_knode **buckets, cs_knode *node, size_t index) {
     if (buckets[index] == NULL) {
         buckets[index] = node;
         node->next = NULL;
@@ -75,8 +76,7 @@ static void resize_(cs_hash_tab *tab, float factor) {
     tab->buckets = buckets;
 }
 
-static cs_knode *lookup_(cs_hash_tab *tab, const char *key) {
-    size_t index = tab->hash(key) % tab->size;
+static inline cs_knode *lookup_i_(cs_hash_tab *tab, const char *key, size_t index) {
     for (cs_knode *n = tab->buckets[index]; n != NULL; n = n->next) {
         if (strcmp(key, n->key) == 0)
         return n;
@@ -85,7 +85,8 @@ static cs_knode *lookup_(cs_hash_tab *tab, const char *key) {
 }
 
 static void map_(cs_hash_tab *tab, const char *key, void *val) {
-    cs_knode *n = lookup_(tab, key);
+    size_t index = tab->hash(key) % tab->size;
+    cs_knode *n = lookup_i_(tab, key, index);
     
     // a value is already defined for this key
     // cleanup old; assign new
@@ -95,11 +96,9 @@ static void map_(cs_hash_tab *tab, const char *key, void *val) {
         n->val = val;
         return;
     }
-    
-    size_t index = tab->hash(key) % tab->size;
-    
+        
     cs_knode *node = malloc(sizeof(cs_knode));
-    node->key = strdup(key);
+    node->key = (tab->copy_keys ? strdup(key) : (char *)key);
     node->val = val;
     
     install_(tab->buckets, node, index);
@@ -119,7 +118,7 @@ static void *delete_(cs_hash_tab *tab, const char *key) {
             if (i++ == 0 && n->next == NULL)
                 tab->buckets[index] = NULL;
             void *data = n->val;
-            destroy_node_(n);
+            destroy_node_(n, tab->free_keys);
             
             if (tab->count-- / (float)tab->size <= tab->min_load)
                 resize_(tab, 0.5f);
@@ -145,7 +144,7 @@ void cs_hash_set(cs_hash_tab *tab, const char *key, void *val) {
 }
 
 void *cs_hash_get(cs_hash_tab *tab, const char *key) {
-    cs_knode *n = lookup_(tab, key);
+    cs_knode *n = lookup_i_(tab, key, tab->hash(key) % tab->size);
     if (n == NULL)
         return NULL;
     return n->val;
@@ -162,12 +161,13 @@ cs_hash_tab *cs_hash_create_opt(size_t initial, float max_load, float min_load) 
     cs_hash_tab *tab = malloc(sizeof(cs_hash_tab));
     if (tab == NULL)
         return NULL;
-    tab->count      = 0;
-    tab->size           = initial;
-    tab->max_load   = max_load;
-    tab->min_load   = min_load;
-    tab->cleanup    = NULL;
+    tab->count = 0;
+    tab->size = initial;
+    tab->max_load = max_load;
+    tab->min_load = min_load;
+    tab->cleanup = NULL;
     tab->hash = hash_;
+    tab->free_keys = tab->copy_keys = 1;
     tab->buckets = calloc(sizeof(cs_knode *) * initial, 1);
     if (tab->buckets == NULL) {
         free(tab);
@@ -213,7 +213,7 @@ void cs_hash_destroy(cs_hash_tab *tab) {
         for (cs_knode *n = tab->buckets[i]; n != NULL; n = n->next) {
             if (tab->cleanup)
                 tab->cleanup(n->key, n->val);
-            destroy_node_(n);
+            destroy_node_(n, tab->free_keys);
         }
     }
     free(tab->buckets);
