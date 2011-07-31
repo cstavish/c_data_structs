@@ -25,6 +25,9 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+#ifndef CS_HASH_TAB_H
+#define CS_HASH_TAB_H
+
 #include <stdint.h>
 
 struct cs_knode {
@@ -141,3 +144,5 @@ void cs_hash_iterate(cs_hash_tab *tab, void (*for_each)(cs_hash_tab *, const cha
  *
  */
 void cs_hash_destroy(cs_hash_tab *tab);
+
+#endif

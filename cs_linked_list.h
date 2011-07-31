@@ -25,6 +25,9 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+#ifndef CS_LINKED_LIST_H
+#define CS_LINKED_LIST_H
+
 #include <stdint.h>
 #include <stddef.h>
 
@@ -155,3 +158,5 @@ uint8_t cs_dll_app(cs_dll *list, void *data);
  */
 void cs_sll_destroy(cs_sll *list);
 void cs_dll_destroy(cs_dll *list);
+
+#endif
